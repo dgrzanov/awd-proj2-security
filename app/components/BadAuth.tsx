@@ -2,12 +2,20 @@ import { Checkbox } from "@mui/joy";
 import axios from "axios";
 import React, { useState } from "react";
 
+type FormDataType = {
+  username: string;
+  password: string;
+};
+
 const BadAuth = () => {
-  const [safe, setSafe] = useState(false);
-  const [formData, setFormData] = useState<UserFormDataType>({
+  const [unsafe, setUnsafe] = useState(false);
+  const [formData, setFormData] = useState<FormDataType>({
     username: "",
     password: "",
   });
+  const [message, setMessage] = useState<string | undefined>(undefined);
+  const [error, setError] = useState(false);
+  const [counter, setCounter] = useState(0);
 
   const handleChange = (
     evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -22,29 +30,36 @@ const BadAuth = () => {
   const handleSubmit = (evt: React.FormEvent) => {
     evt.preventDefault();
 
-    axios.post(safe ? "api/find-user/safe" : "api/find-user/unsafe", formData);
+    axios
+      .post(unsafe ? "api/login/unsafe" : "api/login/safe", formData)
+      .then((res) => {
+        console.log("res: ", res);
+        const { data } = res;
+        if (data.success === false) {
+          setCounter(counter + 1);
+          setError(true);
+        } else {
+          setError(false);
+        }
+        setMessage(data.message);
+      });
   };
 
   return (
-    <div>
-      <h2>Bad Auth</h2>
+    <div className="flex flex-col gap-4">
+      <h2 className="text-xl">Losa autentifikacija</h2>
       <p>Tu imamo primjer Lose autentifikacije.</p>
       <Checkbox
         onChange={(evt) => {
-          setSafe(evt.target.checked);
+          setUnsafe(evt.target.checked);
         }}
         label="Ukljuci ranjivost"
         sx={{ color: "white" }}
       />
       <hr />
-      <form
-        onSubmit={handleSubmit}
-        method="POST"
-        action={"api/competition/generate"}
-        className="flex flex-col gap-5"
-      >
-        <div className="flex justify-between gap-3">
-          <label>Username:</label>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+        <div className="flex justify-start gap-3">
+          <label className="w-20">Username:</label>
           <input
             type="text"
             name="username"
@@ -53,17 +68,21 @@ const BadAuth = () => {
             className="bg-slate-600"
           />
         </div>
-        <div className="flex justify-between gap-3">
-          <label>Password:</label>
+        <div className="flex justify-start gap-3">
+          <label className="w-20">Password:</label>
           <input
-            name="competitorList"
             type="password"
+            name="password"
             value={formData.password}
             onChange={handleChange}
             className="bg-slate-600"
           />
         </div>
-        <button type="submit">Save</button>
+        <button type="submit" className="border hover:bg-slate-500">
+          Login
+        </button>
+        {error && message ? <p className="text-red-600">{message}</p> : null}
+        {!error && message ? <p className="">{message}</p> : null}
       </form>
     </div>
   );

@@ -57,14 +57,9 @@ const SqlInjection = () => {
         sx={{ color: "white" }}
       />
       <hr />
-      <form
-        onSubmit={handleSubmit}
-        method="POST"
-        action={"api/competition/generate"}
-        className="flex flex-col gap-5"
-      >
-        <div className="flex justify-between gap-3">
-          <label>Username:</label>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <div className="flex justify-start gap-3">
+          <label className="w-20">Username:</label>
           <input
             type="text"
             name="username"

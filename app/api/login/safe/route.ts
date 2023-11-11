@@ -5,17 +5,26 @@ export async function POST(request: Request) {
   const data = await request.json();
   const { username, password } = data;
 
-  //@ts-ignore
-  const result = await conn.query(
-    `INSERT INTO users_safe (name, win, draw, defeat) VALUES ($1, $2, $3, $4) RETURNING id`,
-    [compData.name, compData.win, compData.draw, compData.defeat]
-  );
-  const newId = result.rows[0].id;
-  console.log(newId);
-  generateCompetition(compData.competitors, newId);
-  return Response.json({ success: true });
-}
-
-export async function GET() {
-  return Response.json({ test: "testujem" });
+  try {
+    //@ts-ignore
+    const result = await conn.query(
+      `SELECT * FROM proj2.users_unsafe WHERE username=$1`,
+      [username]
+    );
+    if (result.rows[0].password == password)
+      return Response.json({
+        success: true,
+        message: "Uspjesno ste prijavljeni.",
+      });
+    else
+      return Response.json({
+        success: false,
+        message: "Pogresno korisnicko ime ili lozinka!",
+      });
+  } catch (error) {
+    return Response.json({
+      success: false,
+      message: "Pogresno korisnicko ime ili lozinka!",
+    });
+  }
 }
