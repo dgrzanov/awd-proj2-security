@@ -28,7 +28,12 @@ const BadAuth = () => {
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-xl">Losa autentifikacija</h2>
-      <p>Tu imamo primjer Lose autentifikacije.</p>
+      <p>
+        Tu imamo primjer Lose autentifikacije. Kad je ranjivost iskljucena,
+        aplikacija kaze tocno je li krivo korisnicko ime ili lozinka. Nema
+        ogranicenja za krive pokusaje. Kad je ranjivost iskljucena aplikacija
+        nakon 3 kriva pokusaja blokira unos na 30 sekundi.
+      </p>
       <Checkbox
         onChange={(evt) => {
           setUnsafe(evt.target.checked);
