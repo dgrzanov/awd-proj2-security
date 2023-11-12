@@ -1,8 +1,9 @@
 import { Checkbox } from "@mui/joy";
 import axios from "axios";
 import React, { useState } from "react";
+import LoginForm from "./LoginForm";
 
-type FormDataType = {
+export type FormDataType = {
   username: string;
   password: string;
 };
@@ -13,9 +14,6 @@ const BadAuth = () => {
     username: "",
     password: "",
   });
-  const [message, setMessage] = useState<string | undefined>(undefined);
-  const [error, setError] = useState(false);
-  const [counter, setCounter] = useState(0);
 
   const handleChange = (
     evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -25,24 +23,6 @@ const BadAuth = () => {
       ...formData,
       [name]: value,
     });
-  };
-
-  const handleSubmit = (evt: React.FormEvent) => {
-    evt.preventDefault();
-
-    axios
-      .post(unsafe ? "api/login/unsafe" : "api/login/safe", formData)
-      .then((res) => {
-        console.log("res: ", res);
-        const { data } = res;
-        if (data.success === false) {
-          setCounter(counter + 1);
-          setError(true);
-        } else {
-          setError(false);
-        }
-        setMessage(data.message);
-      });
   };
 
   return (
@@ -57,33 +37,11 @@ const BadAuth = () => {
         sx={{ color: "white" }}
       />
       <hr />
-      <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-        <div className="flex justify-start gap-3">
-          <label className="w-20">Username:</label>
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            className="bg-slate-600"
-          />
-        </div>
-        <div className="flex justify-start gap-3">
-          <label className="w-20">Password:</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            className="bg-slate-600"
-          />
-        </div>
-        <button type="submit" className="border hover:bg-slate-500">
-          Login
-        </button>
-        {error && message ? <p className="text-red-600">{message}</p> : null}
-        {!error && message ? <p className="">{message}</p> : null}
-      </form>
+      <LoginForm
+        formData={formData}
+        unsafe={unsafe}
+        handleChange={handleChange}
+      />
     </div>
   );
 };
